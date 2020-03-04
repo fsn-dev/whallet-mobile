@@ -1,5 +1,4 @@
-# fsn
-
+# whallet
 ## Project setup
 ```
 yarn install
