@@ -9,7 +9,7 @@
           <label class="label">{{$t('label').address}}:</label>
           <div class="input-box relative">
             <input type="text" v-model="formData.to" class="input-text HH100 WW100 pr-40" :disabled="isToAsset && sendType === '1' && activeName === 'a'">
-            <div class="down-arrow flex-c" @click="isToAsset && sendType === '1' ? '' : prop.address = true"><van-icon name="location-o" /></div>
+            <div class="down-arrow flex-c" @click="isToAsset && sendType === '1' && activeName === 'a' ? '' : prop.address = true"><van-icon name="location-o" /></div>
           </div>
           <!-- <span class="flex-sc font12 color_99">{{$t('label').balance}}：{{balance}}</span> -->
         </li>
@@ -397,30 +397,6 @@ export default {
     },
     AssetToAssetSign (pwd) {
       this.buildTxnsAndSign(pwd, 'buildSendAssetTx')
-      // let rawTx = {
-      //   from: this.address,
-      //   to: this.formData.to.replace(/\s/, ''),
-      //   value: this.$$.web3.utils.toHex(this.$$.web3.utils.toWei(this.formData.value.toString(), 'ether')),
-      //   asset: this.assetId
-      // }
-      // this.$$.web3.fsntx.buildSendAssetTx({
-      //   ...rawTx,
-      // }).then(res => {
-      //   this.maxFee = parseInt(res.gas) * parseInt(res.gasPrice)
-      //   this.maxFee = this.$$.web3.utils.fromWei(this.maxFee.toString(), 'ether')
-
-      //   res.chainId = this.chainId
-      //   res.from = this.address
-      //   console.log(res)
-      //   let tx = new Tx(res)
-      //   tx.sign(pwd)
-      //   this.signTx = tx.serialize().toString("hex")
-      //   this.signTx = this.signTx.indexOf("0x") === 0 ? this.signTx : ("0x" + this.signTx)
-      //   this.prop.confirm = true
-      //   console.log(this.signTx)
-      // }).catch(err => {
-      //   this.$notify(err.toString())
-      // })
     },
     AssetToTimeLockSign (pwd, type) {
       let endTime = '', startTime = ''
@@ -443,33 +419,6 @@ export default {
       startTime = parseInt(startTime / 1000)
       startTime = this.$$.web3.utils.toHex(startTime)
       this.buildTxnsAndSign(pwd, 'buildAssetToTimeLockTx', startTime, endTime)
-      // console.log(this.formData)
-      // let rawTx = {
-      //   from: this.address,
-      //   to: this.formData.to.replace(/\s/, ''),
-      //   value: this.$$.web3.utils.toHex(this.$$.web3.utils.toWei(this.formData.value.toString(), 'ether')),
-      //   start: startTime,
-      //   end: endTime,
-      //   asset: this.assetId,
-      // }
-      // console.log(rawTx)
-      // this.$$.web3.fsntx.buildAssetToTimeLockTx({
-      //   ...rawTx
-      // }).then(res => {
-      //   this.maxFee = parseInt(res.gas) * parseInt(res.gasPrice)
-      //   this.maxFee = this.$$.web3.utils.fromWei(this.maxFee.toString(), 'ether')
-      //   res.chainId = this.chainId
-      //   res.from = this.address
-      //   console.log(res)
-      //   let tx = new Tx(res)
-      //   tx.sign(pwd)
-      //   this.signTx = tx.serialize().toString("hex")
-      //   this.signTx = this.signTx.indexOf("0x") === 0 ? this.signTx : ("0x" + this.signTx)
-      //   this.prop.confirm = true
-      //   console.log(this.signTx)
-      // }).catch(err => {
-      //   this.$notify(err.toString())
-      // })
     },
     TimeLockToTimeLockSign (pwd, type) {
       let endTime = '', startTime = ''
@@ -480,37 +429,18 @@ export default {
         startTime = new Date(this.formData.startTime).getTime()
         endTime = new Date(this.formData.endTime).getTime()
         endTime = parseInt(endTime / 1000)
+        endTime = Number(this.urlParams.EndTime) <= endTime ? Number(this.urlParams.EndTime) : endTime
+        // console.log(endTime)
+      //   this.minDate = new Date(Number(this.urlParams.StartTime) * 1000)
+      // this.maxDate = new Date(Number(this.urlParams.EndTime) * 1000)
         endTime = this.$$.web3.utils.toHex(endTime)
       }
       startTime = parseInt(startTime / 1000)
+      startTime = Number(this.urlParams.StartTime) >= startTime ? Number(this.urlParams.StartTime) : startTime
+      // console.log(startTime)
       startTime = this.$$.web3.utils.toHex(startTime)
-      console.log(startTime)
+      // console.log(startTime)
       this.buildTxnsAndSign(pwd, 'buildTimeLockToTimeLockTx', startTime, endTime)
-      // let rawTx = {
-      //   from: this.address,
-      //   to: this.formData.to.replace(/\s/, ''),
-      //   value: this.$$.web3.utils.toHex(this.$$.web3.utils.toWei(this.formData.value.toString(), 'ether')),
-      //   start: startTime,
-      //   end: endTime,
-      //   asset: this.assetId,
-      // }
-      // console.log(rawTx)
-      // this.$$.web3.fsntx.buildTimeLockToTimeLockTx({
-      //   ...rawTx
-      // }).then(res => {
-      //   this.maxFee = parseInt(res.gas) * parseInt(res.gasPrice)
-      //   this.maxFee = this.$$.web3.utils.fromWei(this.maxFee.toString(), 'ether')
-      //   res.chainId = this.chainId
-      //   res.from = this.address
-      //   console.log(res)
-      //   let tx = new Tx(res)
-      //   tx.sign(pwd)
-      //   this.signTx = tx.serialize().toString("hex")
-      //   this.signTx = this.signTx.indexOf("0x") === 0 ? this.signTx : ("0x" + this.signTx)
-      //   this.prop.confirm = true
-      //   console.log(this.signTx)
-      // }).catch(err => {
-      //   this.$notify(err.toString())
       // })
     },
     TimeLockToAssetSign (pwd) {
@@ -522,35 +452,9 @@ export default {
       endTime = this.$$.web3.utils.toHex('18446744073709551615')
       console.log(startTime)
       this.buildTxnsAndSign(pwd, 'buildTimeLockToAssetTx', startTime, endTime)
-      // this.buildTxnsAndSign(pwd, 'timeLockToAsset', startTime, endTime)
-      // let rawTx = {
-      //   from: this.address,
-      //   to: this.formData.to.replace(/\s/, ''),
-      //   value: this.$$.web3.utils.toHex(this.$$.web3.utils.toWei(this.formData.value.toString(), 'ether')),
-      //   start: startTime,
-      //   end: endTime,
-      //   asset: this.assetId,
-      // }
-      // console.log(rawTx)
-      // this.$$.web3.fsntx.buildTimeLockToAssetTx({
-      //   ...rawTx
-      // }).then(res => {
-      //   this.maxFee = parseInt(res.gas) * parseInt(res.gasPrice)
-      //   this.maxFee = this.$$.web3.utils.fromWei(this.maxFee.toString(), 'ether')
-      //   res.chainId = this.chainId
-      //   res.from = this.address
-      //   console.log(res)
-      //   let tx = new Tx(res)
-      //   tx.sign(pwd)
-      //   this.signTx = tx.serialize().toString("hex")
-      //   this.signTx = this.signTx.indexOf("0x") === 0 ? this.signTx : ("0x" + this.signTx)
-      //   this.prop.confirm = true
-      //   console.log(this.signTx)
-      // }).catch(err => {
-      //   this.$notify(err.toString())
-      // })
     },
     buildTxnsAndSign (pwd, param, startTime, endTime) {
+      console.log(param)
       let rawTx = {
         from: this.address,
         to: this.formData.to.replace(/\s/, ''),
@@ -558,10 +462,10 @@ export default {
         asset: this.assetId,
       }
       if (startTime) {
-        rawTx.startTime = startTime
+        rawTx.start = startTime
       }
       if (endTime) {
-        rawTx.endTime = endTime
+        rawTx.end = endTime
       }
       console.log(rawTx)
       this.$$.web3.fsntx[param]({
